@@ -364,7 +364,12 @@ namespace QaCore
             {
                 var e = GetBy(step.IdBy, step.IdValue);
                 r = Pass(step);
-                r.Note = e.Text;
+                if (e.TagName == "input") {
+                    r.Note = e.GetAttribute("value");
+                }
+                else {
+                    r.Note = e.Text;
+                }
             }
             catch (Exception ex)
             {
