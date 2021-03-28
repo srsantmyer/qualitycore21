@@ -636,7 +636,7 @@ namespace QaCore
                     n = step.ActionValue;
                 }
                 var wait = new WebDriverWait(_driver, TimeSpan.FromMinutes(1));
-                var clickableElement = wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.Id(n)));
+                var clickableElement = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.InvisibilityOfElementLocated(By.Id(n)));
                 r = Pass(step);
             }
             catch (Exception ex) {
@@ -658,10 +658,10 @@ namespace QaCore
                 var wait = new WebDriverWait(_driver, TimeSpan.FromMinutes(1));
                 switch (step.IdBy) {
                     case "xpath":
-                        var xpe = wait.Until(ExpectedConditions.ElementIsVisible(By.XPath(n)));
+                        var xpe = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.XPath(n)));
                         break;
                     default:
-                        var ide = wait.Until(ExpectedConditions.ElementIsVisible(By.Id(n)));
+                        var ide = wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(By.Id(n)));
                         break;
                 }
                 r = Pass(step);
