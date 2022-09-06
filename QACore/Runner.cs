@@ -9,8 +9,8 @@ namespace QaCore
 {
     public class Runner
     {
-        WebDriverUtil driverUtil = new WebDriverUtil();
-        StepActions stepActions = new StepActions();
+        readonly WebDriverUtil driverUtil = new WebDriverUtil();
+        readonly StepActions stepActions = new StepActions();
 
         RunnerArguments arguments = null;
         IWebDriver webDriver = null;
@@ -24,7 +24,7 @@ namespace QaCore
         public Runner(RunnerArguments args)
         {
             arguments = args;
-            webDriver = driverUtil.GetWebDriver(arguments.DriverType);
+            webDriver = driverUtil.GetWebDriver(arguments.DriverType, false);
             stepActions = new StepActions(webDriver);
             switch(args.Source)
             {
@@ -106,16 +106,31 @@ namespace QaCore
                 case "clicklocation":
                     r = stepActions.ClickLocationAction(step);
                     break;
+                case "clicklocationandsenddown":
+                    r = stepActions.ClickLocationAndSendDownAction(step);
+                    break;
+                case "clicklocationandsendbackspace":
+                    r = stepActions.ClickLocationAndSendBackSpace(step);
+                    break;
+                case "clickxlocationsinarray":
+                    r = stepActions.ClickXLocationsInArray(step);
+                    break;
                 case "close":
                     r = stepActions.CloseAction(step);
                     break;
                 case "dropdownselectbytext":
                     r = stepActions.DropdownSelectByTextAction(step);
                     break;
+                case "dropdowngetselectedoption":
+                    r = stepActions.DropdownGetSelectedOptionAction(step);
+                    break;
                 case "execute":
                     throw new NotImplementedException();
-                    // r = ExecuteAnotherTable(r, step.Action, step.ActionValue);
-                    // break;
+                // r = ExecuteAnotherTable(r, step.Action, step.ActionValue);
+                // break;
+                case "executejs":
+                    r = stepActions.ExecuteJs(step);
+                    break;
                 case "find":
                     r = stepActions.FindAction(step);
                     break;
@@ -184,6 +199,11 @@ namespace QaCore
 
         public List<IWebElement> GetIt(string by, string selector) {
             return stepActions.GetElements(new TestStep() { IdBy = by, IdValue = selector });
+        }
+
+        public List<IWebElement> GetElementsRightOf(string tagName, string xpath)
+        {
+            return stepActions.GetElementsRightOf(tagName, xpath);
         }
 
         /// <summary>
