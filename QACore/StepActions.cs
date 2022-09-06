@@ -89,6 +89,75 @@ namespace QaCore
             return r;
         }
 
+        public StepResult ClickLocationAndSendDownAction(TestStep step)
+        {
+            StepResult r;
+            try
+            {
+                Actions actions = new Actions(_driver);
+                actions.MoveToElement(GetBy(step.IdBy, step.IdValue));
+                actions.Click();
+                actions.SendKeys(Keys.ArrowDown);
+                actions.SendKeys(Keys.Enter);
+                actions.Build().Perform();
+                r = Pass(step);
+            }
+            catch (Exception ex)
+            {
+                r = Fail(step, ex);
+            }
+            return r;
+        }
+
+        public StepResult ClickLocationAndSendBackSpace(TestStep step)
+        {
+            StepResult r;
+            try
+            {
+                Actions actions = new Actions(_driver);
+                actions.MoveToElement(GetBy(step.IdBy, step.IdValue));
+                actions.Click();
+                actions.SendKeys(Keys.Backspace);
+                actions.Build().Perform();
+                r = Pass(step);
+            }
+            catch (Exception ex)
+            {
+                r = Fail(step, ex);
+            }
+            return r;
+        }
+
+        public StepResult ClickXLocationsInArray(TestStep step)
+        {
+            StepResult r;
+            try
+            {
+                var array = GetElements(step);
+                if (array != null && array.Count > 0)
+                {
+                    var limit = int.Parse(step.ActionValue);
+                    for (int x = 0; x < limit; x++)
+                    {
+                        Actions actions = new Actions(_driver);
+                        actions.MoveToElement(array[x], 0, -1);
+                        actions.Click();
+                        actions.Build().Perform();
+                    }
+                    r = Pass(step);
+                }
+                else
+                {
+                    r = Fail(step, new NoSuchElementException());
+                }
+            }
+            catch (Exception ex)
+            {
+                r = Fail(step, ex);
+            }
+            return r;
+        }
+
         public StepResult CloseAction(TestStep step)
         {
             StepResult r = new StepResult();
@@ -159,6 +228,39 @@ namespace QaCore
                 r = Pass(step);
             }
             catch(Exception ex)
+            {
+                r = Fail(step, ex);
+            }
+            return r;
+        }
+
+        public StepResult DropdownGetSelectedOptionAction(TestStep step)
+        {
+            StepResult r;
+            try
+            {
+                var e = new SelectElement(GetBy(step.IdBy, step.IdValue));
+                r = Pass(step);
+                r.Note = e.SelectedOption.Text;
+            }
+            catch (Exception ex)
+            {
+                r = Fail(step, ex);
+            }
+            return r;
+        }
+
+        public StepResult ExecuteJs(TestStep step)
+        {
+            StepResult r = new StepResult();
+            try
+            {
+                IJavaScriptExecutor js = (IJavaScriptExecutor)_driver;
+                var e = GetElements(step);
+                js.ExecuteScript(step.ActionValue, e[int.Parse(step.ExpectedResult)]);
+                r = Pass(step);
+            }
+            catch (Exception ex)
             {
                 r = Fail(step, ex);
             }
@@ -548,6 +650,27 @@ namespace QaCore
                 Note = "Item was not found"
             };
             return r;
+        }
+
+        public List<IWebElement> GetElementsRightOf(string tagName, string xPath)
+        {
+            return _driver.FindElements(RelativeBy.WithLocator(By.TagName(tagName)).RightOf(By.XPath(xPath))).ToList();
+        }
+        public List<IWebElement> GetElementsLeftOf(string tagName, string xPath)
+        {
+            return _driver.FindElements(RelativeBy.WithLocator(By.TagName(tagName)).LeftOf(By.XPath(xPath))).ToList();
+        }
+        public List<IWebElement> GetElementsAboveOf(string tagName, string xPath)
+        {
+            return _driver.FindElements(RelativeBy.WithLocator(By.TagName(tagName)).Above(By.XPath(xPath))).ToList();
+        }
+        public List<IWebElement> GetElementsBelowOf(string tagName, string xPath)
+        {
+            return _driver.FindElements(RelativeBy.WithLocator(By.TagName(tagName)).Below(By.XPath(xPath))).ToList();
+        }
+        public List<IWebElement> GetElementsNearOf(string tagName, string xPath)
+        {
+            return _driver.FindElements(RelativeBy.WithLocator(By.TagName(tagName)).Near(By.XPath(xPath))).ToList();
         }
 
         /// <summary>
